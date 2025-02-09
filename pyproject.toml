@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Scraping-for-OpenEmbedded"
+version = "0.0.1"
+
+dependencies = [
+  "tabulate",
+  "selectolax"
+]
+
+requires-python = ">=3.8"
+authors = [
+  {name = "Moatasem-Elsayed", email = "eng.moatasem.8@gmail.com"}
+]
+description = "Scraping for OpenEmbedded (https://layers.openembedded.org/)"
+readme = "README.md"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+[project.urls]
+Repository = "https://github.com/Moatasem-Elsayed/Scraping-for-OpenEmbedded.git"
+
+[project.scripts]
+scrapeOpenEmbedded = "openEmbedded.main:cli"
