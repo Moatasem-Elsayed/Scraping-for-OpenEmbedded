@@ -4,7 +4,10 @@ from itertools import islice
 from selectolax.parser import HTMLParser, Node
 
 
-# TODO: either examine the redirects or count number of tables in the page
+# TODO: either:
+# * examine the redirects
+# * count number of tables in the page
+# * look for #error div
 class RedirectHandler(urllib.request.HTTPRedirectHandler):
     is_redirected = False
 
@@ -40,6 +43,7 @@ def parse_recipe_table(node: Node) -> tuple[str, str, str, str]:
 
 
 def parse_search_table(node: Node) -> Iterable[tuple[str, str]]:
+    # TODO: assert non-empty
     first_table: Node = node.css_first("table")
     rows: list[Node] = first_table.css("tbody > tr")
     erg = map(
@@ -59,6 +63,11 @@ def scrape(term: str, limit: int = 5) -> list[tuple[str, str, str, str]]:
     _, is_redirect, content = raw_html(
         f"https://layers.openembedded.org/layerindex/branch/master/recipes/?q={term}"
     )
+    doc = parse_html(content)
+    err = doc.css("#error + p")
+    if len(err) == 1 and err[0].text() == "No matching recipes in database.":
+        return []
     if is_redirect:
-        return [parse_recipe_table(parse_html(content))]
-    return list(islice(parse_search_table(parse_html(content)), limit))
+        return [parse_recipe_table(doc)]
+
+    return list(islice(parse_search_table(doc), limit))
